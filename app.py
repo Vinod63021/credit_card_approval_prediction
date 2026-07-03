@@ -37,8 +37,8 @@ def predict():
             'NAME_EDUCATION_TYPE': request.form.get('education'),
             'NAME_FAMILY_STATUS': request.form.get('family_status'),
             'NAME_HOUSING_TYPE': request.form.get('housing'),
-            'DAYS_BIRTH': float(request.form.get('days_birth')),
-            'DAYS_EMPLOYED': float(request.form.get('days_employed')),
+            'DAYS_BIRTH': -float(request.form.get('age')) * 365.25,
+            'DAYS_EMPLOYED': -float(request.form.get('years_employed')) * 365.25,
             'CNT_FAM_MEMBERS': float(request.form.get('family_members'))
         }
 
@@ -58,14 +58,16 @@ def predict():
         
         # 5. Interpret result
         if prediction[0] == 1:
-            result = "🔴 High Risk - Application Denied."
+            result = "Oops! You should try again. Application Denied."
+            status = "denied"
         else:
-            result = "🟢 Low Risk - Application Approved!"
+            result = "Congratulations! Your application is approved."
+            status = "approved"
             
-        return render_template('index.html', prediction_text=result)
+        return render_template('index.html', prediction_text=result, status=status)
 
     except Exception as e:
-        return render_template('index.html', prediction_text=f"An error occurred: {e}")
+        return render_template('index.html', prediction_text=f"An error occurred: {e}", status="error")
 
 if __name__ == "__main__":
     app.run(debug=True)
